@@ -1,18 +1,16 @@
 package com.minami.album;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ImageView;
 
 public class CreateActivity extends AppCompatActivity {
+    private ImageView imageView;
 
 
     @Override
@@ -35,23 +33,25 @@ public class CreateActivity extends AppCompatActivity {
 
                 }
 
-                startActivityForResult(intentGallery,REQUEST_CODE);
+                startActivityForResult(intentGallery, GALLERY_REQUEST_CODE);
             }
         });
 
 
     }
 
-    private static final int REQUEST_CODE = 1;
+    private static final int GALLERY_REQUEST_CODE = 1;
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent resultDate) {
+    public void onActivityResult(int requestCode, int resultCode, Intent resultDate) {
+        Uri uri;
+        String filePath = "";
         switch (requestCode) {
-            case (REQUEST_CODE):
+            case (GALLERY_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
                 } else if (resultCode == RESULT_CANCELED) {
-                }
+                }break;
+
         }
     }
 }
