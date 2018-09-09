@@ -16,15 +16,21 @@ import java.util.List;
 
 public class AlbumRecyclerAdaptar extends RecyclerView.Adapter<AlbumRecyclerAdaptar.ViewHolder> {
 
-    private List<Album> albums;
+    private Album albums;
 
     private Context context;
     private LayoutInflater inflater;
 
-    public AlbumRecyclerAdaptar(List<Album> albums, Context context, LayoutInflater inflater) {
+    public AlbumRecyclerAdaptar(Album albums, Context context, LayoutInflater inflater) {
         this.inflater = inflater;
         this.albums = albums;
         this.context = context;
+    }
+
+    public void updatePhoto(Uri uri) {
+        albums.listPictures.add(uri);
+        // Re-load again
+        notifyDataSetChanged();
     }
 
     /**
@@ -45,9 +51,7 @@ public class AlbumRecyclerAdaptar extends RecyclerView.Adapter<AlbumRecyclerAdap
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Album album = albums.get(position);
-
-        Uri uri = album.path;
+        Uri uri = albums.listPictures.get(position);
         try {
             InputStream is = context.getContentResolver().openInputStream(uri);
             Bitmap bmp = BitmapFactory.decodeStream(is);
@@ -66,7 +70,7 @@ public class AlbumRecyclerAdaptar extends RecyclerView.Adapter<AlbumRecyclerAdap
      */
     @Override
     public int getItemCount() {
-        return albums.size();
+        return albums.listPictures.size();
 
     }
 
