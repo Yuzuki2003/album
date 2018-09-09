@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -30,11 +31,11 @@ public class CreateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
-        ImageButton button = findViewById(R.id.imageButton);
         imagebutton = findViewById(R.id.imageButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        imagebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("halu", "Clicked");
                 Intent intentGallery;
                 if (Build.VERSION.SDK_INT < 19) {
                     intentGallery = new Intent(Intent.ACTION_GET_CONTENT);
@@ -62,23 +63,16 @@ public class CreateActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         Uri uri;
         String filePath = "";
-        imagebutton = findViewById(R.id.imageButton);
         switch (requestCode) {
             case (GALLERY_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
-                    try {
-                        if (resultData.getData() != null) {
-                            photoList.add(resultData.getData());
-                            adapter.updatePhoto(resultData.getData());
-                            InputStream is = getContentResolver().openInputStream(resultData.getData());
-                            Bitmap bmp = BitmapFactory.decodeStream(is);
-                            is.close();
-                            imagebutton.setImageBitmap(bmp);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (resultData.getData() != null) {
+                        photoList.add(resultData.getData());
+                        adapter.updatePhoto(resultData.getData());
                     }
+
                 } else if (resultCode == RESULT_CANCELED) {
+                    // do something
                 }
                 break;
 
