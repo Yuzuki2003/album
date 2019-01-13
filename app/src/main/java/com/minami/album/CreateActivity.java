@@ -48,13 +48,6 @@ public class CreateActivity extends AppCompatActivity {
                 startActivityForResult(intentGallery, GALLERY_REQUEST_CODE);
             }
         });
-
-        RecyclerView recyclerView;
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
-        Album album = new Album(photoList, "Sample Title");
-        adapter = new AlbumRecyclerAdaptar(album, getApplicationContext(), getLayoutInflater());
-        recyclerView.setAdapter(adapter);
     }
 
     private static final int GALLERY_REQUEST_CODE = 1;
