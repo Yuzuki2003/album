@@ -48,12 +48,15 @@ public class CreateActivity extends AppCompatActivity {
     private Uri cameraUri;
     private File cameraFile;
     private Intent intentCamera;
-    private ImageView photo;
+    private ImageView photo[];
+    private RecyclerView recyclerView;
+    int i = 0;
     float x;
     float y;
     boolean flag = false;
     RelativeLayout relativelayout;
     FrameLayout frame;
+
 
 
     @Override
@@ -69,7 +72,7 @@ public class CreateActivity extends AppCompatActivity {
             }
         });
 
-        photo = (ImageView)findViewById(R.id.photo);
+
         frame = (FrameLayout) findViewById(R.id.framelayout);
         photo.setOnTouchListener(new View.OnTouchListener() {
             @Override
