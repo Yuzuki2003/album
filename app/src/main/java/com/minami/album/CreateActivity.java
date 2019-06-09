@@ -1,43 +1,32 @@
 package com.minami.album;
 
 import android.Manifest;
-import android.app.DownloadManager;
 import android.content.ClipData;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class CreateActivity extends AppCompatActivity {
     private ImageButton photoButton;
@@ -58,7 +47,6 @@ public class CreateActivity extends AppCompatActivity {
     FrameLayout frame;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,30 +62,25 @@ public class CreateActivity extends AppCompatActivity {
 
 
         frame = (FrameLayout) findViewById(R.id.framelayout);
-        photo.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                ClipData data = ClipData.newPlainText("photo","Drag");
-                view.startDrag(data,new View.DragShadowBuilder(view),(Object)view,0);
-                return false;
-            }
-        });
 
-        relativelayout = (RelativeLayout)findViewById(R.id.relativelayout);
+        photo[i]= new ImageView(this);
+
+
+        relativelayout = (RelativeLayout) findViewById(R.id.relativelayout);
         relativelayout.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
-                switch(dragEvent.getAction()){
+                switch (dragEvent.getAction()) {
                     //case DragEvent.ACTION_DRAG_EXITED:
-                       // flag = false;
-                        //break;
+                    // flag = false;
+                    //break;
                     case DragEvent.ACTION_DROP:
                         x = dragEvent.getX();
                         y = dragEvent.getY();
                         break;
                     //case DragEvent.ACTION_DRAG_ENTERED:
-                      //  flag = true;
-                        //break;
+                    //  flag = true;
+                    //break;
                     default:
                         break;
 
@@ -108,10 +91,31 @@ public class CreateActivity extends AppCompatActivity {
 
 
     }
-    public void addView (int photoNum){
-        FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(180,180);
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (i >= 1) {
+            for (int a = 0; a <= i; a++) {
+                photo[a].setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        ClipData data = ClipData.newPlainText("photo", "Drag");
+                        view.startDrag(data, new View.DragShadowBuilder(view), (Object) view, 0);
+                        return false;
+                    }
+                });
+            }
+        }
+
+    }
+
+
+    public void addView(int photoNum) {
+        FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(180, 180);
         ImageView image = new ImageView(getApplicationContext());
-        image.setImageResource(getResources().getIdentifier("photo" + photoNum,"drawable",getPackageName()));
+        image.setImageResource(getResources().getIdentifier("photo" + photoNum, "drawable", getPackageName()));
 
         frame.addView(image, params);
 
@@ -120,13 +124,11 @@ public class CreateActivity extends AppCompatActivity {
     }
 
 
-
     private void _showGallery() {
 
         if (Build.VERSION.SDK_INT >= 23) {
             checkPermission();
-        }
-        else {
+        } else {
             intentCamera = cameraIntent(); //cameraIntentというIntentを返す
         }
 
@@ -141,8 +143,8 @@ public class CreateActivity extends AppCompatActivity {
         }
 
         Intent intent = Intent.createChooser(intentGallery, "Select Image");
-        if(intentCamera!=null){
-            intent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {intentCamera});
+        if (intentCamera != null) {
+            intent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{intentCamera});
         }
         startActivityForResult(intent, REQUEST_CHOOSER);
     }
@@ -151,14 +153,14 @@ public class CreateActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == REQUEST_CHOOSER) {
+        if (requestCode == REQUEST_CHOOSER) {
 
-            if(resultCode != RESULT_OK) {
-                return ;
+            if (resultCode != RESULT_OK) {
+                return;
             }
             resultUri = (data != null ? data.getData() : cameraUri);
 
-            if(resultUri == null) {
+            if (resultUri == null) {
                 Toast.makeText(this, "Error.Try again.", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -168,23 +170,25 @@ public class CreateActivity extends AppCompatActivity {
                     new String[]{"image/jpeg"},
                     null
             );
-            ImageView imageView = (ImageView)findViewById(R.id.photo);
+//            ImageView imageView = (ImageView) findViewById(R.id.photo);
+            int id = getResources().getIdentifier("photo","id","com.minami.album");
+            photo[i] = (ImageView) findViewById(id);
             imageView.setImageURI(resultUri);
 
-            for (int i = 0; i < 4; i++);
+            for (int i = 0; i < 4; i++) ;
 
         }
     }
 
-    private Intent cameraIntent(){
+    private Intent cameraIntent() {
         File cameraFolder = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "IMG"
         );
         cameraFolder.mkdirs();
 
         String fileName = new SimpleDateFormat("ddHHmmss").format(new Date());
-        filePath = cameraFolder.getPath() +"/" + fileName + ".jpg";
-        Log.d("debug","filePath:"+filePath);
+        filePath = cameraFolder.getPath() + "/" + fileName + ".jpg";
+        Log.d("debug", "filePath:" + filePath);
 
 
         cameraFile = new File(filePath);
@@ -195,14 +199,15 @@ public class CreateActivity extends AppCompatActivity {
 
         return intent;
     }
-    private void checkPermission(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+
+    private void checkPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             cameraIntent();
-        }
-        else{
+        } else {
             requestLocationPermission();
         }
     }
+
     private void requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
