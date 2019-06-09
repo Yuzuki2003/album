@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.Image;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -63,7 +62,7 @@ public class CreateActivity extends AppCompatActivity {
 
         frame = (FrameLayout) findViewById(R.id.framelayout);
 
-        photo[i]= new ImageView(this);
+        photo = new ImageView[i];
 
 
         relativelayout = (RelativeLayout) findViewById(R.id.relativelayout);
@@ -171,9 +170,11 @@ public class CreateActivity extends AppCompatActivity {
                     null
             );
 //            ImageView imageView = (ImageView) findViewById(R.id.photo);
-            int id = getResources().getIdentifier("photo","id","com.minami.album");
+            int id = getResources().getIdentifier("photo", "id", "com.minami.album");
             photo[i] = (ImageView) findViewById(id);
-            imageView.setImageURI(resultUri);
+            photo[i].setImageURI(resultUri);
+            i++;
+            onResume();
 
             for (int i = 0; i < 4; i++) ;
 
