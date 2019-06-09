@@ -57,8 +57,6 @@ public class CreateActivity extends AppCompatActivity {
     RelativeLayout relativelayout;
     FrameLayout frame;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,17 +69,9 @@ public class CreateActivity extends AppCompatActivity {
                 _showGallery();
             }
         });
-
+        photo[i] = new ImageView(this);
 
         frame = (FrameLayout) findViewById(R.id.framelayout);
-        photo.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                ClipData data = ClipData.newPlainText("photo","Drag");
-                view.startDrag(data,new View.DragShadowBuilder(view),(Object)view,0);
-                return false;
-            }
-        });
 
         relativelayout = (RelativeLayout)findViewById(R.id.relativelayout);
         relativelayout.setOnDragListener(new View.OnDragListener() {
@@ -100,13 +90,27 @@ public class CreateActivity extends AppCompatActivity {
                         //break;
                     default:
                         break;
-
                 }
                 return false;
             }
         });
+    }
 
+    protected void  onResume(){
+        super.onResume();
 
+        if (i >= 1){
+            for (int a = 0 ;a <= i; a++);{
+                photo[a].setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        ClipData data = ClipData.newPlainText("photo","Drag");
+                        view.startDrag(data,new View.DragShadowBuilder(view),(Object)view,0);
+                        return false;
+                    }
+                });
+            }
+        }
     }
     public void addView (int photoNum){
         FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(180,180);
@@ -118,8 +122,6 @@ public class CreateActivity extends AppCompatActivity {
         image.setTranslationX(x - (photo[photoNum].getWidth()) / 2);
         image.setTranslationY(y - (photo[photoNum].getHeight()) / 2);
     }
-
-
 
     private void _showGallery() {
 
@@ -169,10 +171,11 @@ public class CreateActivity extends AppCompatActivity {
                     null
             );
             ImageView imageView = (ImageView)findViewById(R.id.photo);
+            int id = getResources().getIdentifier("photo","id","com.")
+            photo[i] = (ImageView)findViewById(id);
             imageView.setImageURI(resultUri);
 
             for (int i = 0; i < 4; i++);
-
         }
     }
 
@@ -208,13 +211,11 @@ public class CreateActivity extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             ActivityCompat.requestPermissions(CreateActivity.this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
-
         } else {
             Toast toast = Toast.makeText(this, "Camera function is disabled", Toast.LENGTH_SHORT);
             toast.show();
 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, REQUEST_PERMISSION);
         }
-
     }
 }
