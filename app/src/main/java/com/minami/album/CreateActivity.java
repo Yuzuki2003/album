@@ -178,10 +178,12 @@ public class CreateActivity extends AppCompatActivity {
             if (change){
                 ImageView imageView = (ImageView)findViewById(R.id.photo);
                 imageView.setImageURI(resultUri);
+                imageView.setVisibility(View.VISIBLE);
                 change = false;
             } else if (!change){
                 ImageView imageView2 = (ImageView)findViewById(R.id.photo2);
                 imageView2.setImageURI(resultUri);
+                imageView2.setVisibility(View.VISIBLE);
             }
 
 
