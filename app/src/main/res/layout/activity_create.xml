@@ -7,39 +7,44 @@
     android:layout_height="match_parent"
     tools:context=".CreateActivity">
 
+    <ImageButton
+        android:id="@+id/photo_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_add_black_48dp" />
+
     <FrameLayout
-        android:id="@+id/framelayout"
+        android:id="@+id/frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/photo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="400dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="18dp"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:scaleType="fitXY"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_launcher_background"
             tools:layout_editor_absoluteX="72dp"
             tools:layout_editor_absoluteY="0dp" />
 
-        <ImageButton
-            android:id="@+id/photo_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_add_black_48dp" />
-
         <ImageView
             android:id="@+id/photo2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="123dp"
+            android:layout_height="400dp"
+            android:layout_alignParentTop="true"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:layout_centerHorizontal="true"
             android:visibility="gone"
-            app:srcCompat="@drawable/ic_launcher_background" />
+            app:srcCompat="@drawable/ic_launcher_background"
+            tools:layout_editor_absoluteX="72dp"
+            tools:layout_editor_absoluteY="0dp"/>
     </FrameLayout>
 
 </RelativeLayout>

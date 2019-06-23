@@ -52,7 +52,6 @@ public class CreateActivity extends AppCompatActivity {
     private ImageView photo2;
     float x;
     float y;
-    boolean flag = false;
     boolean change = true;
     RelativeLayout relativelayout;
     FrameLayout frame;
@@ -73,7 +72,7 @@ public class CreateActivity extends AppCompatActivity {
 
         photo = (ImageView)findViewById(R.id.photo);
         photo2 = (ImageView)findViewById(R.id.photo2);
-        frame = (FrameLayout) findViewById(R.id.framelayout);
+        frame = (FrameLayout) findViewById(R.id.frame);
         photo.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -117,13 +116,6 @@ public class CreateActivity extends AppCompatActivity {
 
 
     }
-    public void addView (int photoNum){
-        FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(180,180);
-        ImageView image = new ImageView(getApplicationContext());
-        image.setImageResource(getResources().getIdentifier("photo" + photoNum,"drawable",getPackageName()));
-
-        frame.addView(image, params);
-    }
 
 
 
@@ -164,10 +156,6 @@ public class CreateActivity extends AppCompatActivity {
             }
             resultUri = (data != null ? data.getData() : cameraUri);
 
-            if(resultUri == null) {
-                Toast.makeText(this, "Error.Try again.", Toast.LENGTH_LONG).show();
-                return;
-            }
             MediaScannerConnection.scanFile(
                     this,
                     new String[]{resultUri.getPath()},
@@ -180,13 +168,12 @@ public class CreateActivity extends AppCompatActivity {
                 imageView.setImageURI(resultUri);
                 imageView.setVisibility(View.VISIBLE);
                 change = false;
+
             } else if (!change){
                 ImageView imageView2 = (ImageView)findViewById(R.id.photo2);
                 imageView2.setImageURI(resultUri);
                 imageView2.setVisibility(View.VISIBLE);
             }
-
-
         }
     }
 
@@ -222,13 +209,10 @@ public class CreateActivity extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             ActivityCompat.requestPermissions(CreateActivity.this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
-
-        } else {
-            Toast toast = Toast.makeText(this, "Camera function is disabled", Toast.LENGTH_SHORT);
-            toast.show();
+        }
 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, REQUEST_PERMISSION);
         }
 
     }
-}
+
