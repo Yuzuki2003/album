@@ -48,14 +48,15 @@ public class CreateActivity extends AppCompatActivity {
     private Uri cameraUri;
     private File cameraFile;
     private Intent intentCamera;
-    private ImageView photo[];
-    private RecyclerView recyclerView;
-    int i = 0;
+    private ImageView photo;
+    private ImageView photo2;
     float x;
     float y;
     boolean flag = false;
+    boolean change = true;
     RelativeLayout relativelayout;
     FrameLayout frame;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +70,27 @@ public class CreateActivity extends AppCompatActivity {
                 _showGallery();
             }
         });
-       photo = new ImageView[i];
 
+        photo = (ImageView)findViewById(R.id.photo);
+        photo2 = (ImageView)findViewById(R.id.photo2);
         frame = (FrameLayout) findViewById(R.id.framelayout);
+        photo.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                ClipData data = ClipData.newPlainText("photo","Drag");
+                view.startDrag(data,new View.DragShadowBuilder(view),(Object)view,0);
+                return false;
+            }
+        });
+
+        photo2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                ClipData data = ClipData.newPlainText("photo2","Drag");
+                view.startDrag(data,new View.DragShadowBuilder(view),(Object)view,0);
+                return false;
+            }
+        });
 
         relativelayout = (RelativeLayout)findViewById(R.id.relativelayout);
         relativelayout.setOnDragListener(new View.OnDragListener() {
@@ -79,40 +98,24 @@ public class CreateActivity extends AppCompatActivity {
             public boolean onDrag(View view, DragEvent dragEvent) {
                 switch(dragEvent.getAction()){
                     //case DragEvent.ACTION_DRAG_EXITED:
-                       // flag = false;
-                        //break;
+                    // flag = false;
+                    //break;
                     case DragEvent.ACTION_DROP:
                         x = dragEvent.getX();
                         y = dragEvent.getY();
                         break;
                     //case DragEvent.ACTION_DRAG_ENTERED:
-                      //  flag = true;
-                        //break;
+                    //  flag = true;
+                    //break;
                     default:
                         break;
+
                 }
                 return false;
             }
         });
-    }
 
 
-    @Override
-    protected void  onResume(){
-        super.onResume();
-
-        if (i >= 1){
-            for (int a = 0 ;a <= i; a++) {
-                photo[a].setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
-                        ClipData data = ClipData.newPlainText("photo","Drag");
-                        view.startDrag(data,new View.DragShadowBuilder(view),(Object)view,0);
-                        return false;
-                    }
-                });
-            }
-        }
     }
     public void addView (int photoNum){
         FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(180,180);
@@ -120,10 +123,9 @@ public class CreateActivity extends AppCompatActivity {
         image.setImageResource(getResources().getIdentifier("photo" + photoNum,"drawable",getPackageName()));
 
         frame.addView(image, params);
-
-        image.setTranslationX(x - (photo[photoNum].getWidth()) / 2);
-        image.setTranslationY(y - (photo[photoNum].getHeight()) / 2);
     }
+
+
 
     private void _showGallery() {
 
@@ -172,14 +174,17 @@ public class CreateActivity extends AppCompatActivity {
                     new String[]{"image/jpeg"},
                     null
             );
-            //ImageView imageView = (ImageView)findViewById(R.id.photo);
-            int id = getResources().getIdentifier("photo","id","com.minami.album");
-            photo[i] = (ImageView)findViewById(id);
-            photo[i].setImageURI(resultUri);
-            i++;
-            onResume();
 
-            for (int i = 0; i < 4; i++);
+            if (change){
+                ImageView imageView = (ImageView)findViewById(R.id.photo);
+                imageView.setImageURI(resultUri);
+                change = false;
+            } else if (!change){
+                ImageView imageView2 = (ImageView)findViewById(R.id.photo2);
+                imageView2.setImageURI(resultUri);
+            }
+
+
         }
     }
 
@@ -215,11 +220,13 @@ public class CreateActivity extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             ActivityCompat.requestPermissions(CreateActivity.this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+
         } else {
             Toast toast = Toast.makeText(this, "Camera function is disabled", Toast.LENGTH_SHORT);
             toast.show();
 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, REQUEST_PERMISSION);
         }
+
     }
 }
