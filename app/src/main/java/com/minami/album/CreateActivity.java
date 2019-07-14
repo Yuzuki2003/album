@@ -39,22 +39,34 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CreateActivity extends AppCompatActivity {
+public class CreateActivity extends AppCompatActivity implements View.OnTouchListener{
+
+    // View
     private ImageButton photoButton;
+    private ImageView photo;
+    private ImageView photo2;
+    private FrameLayout frame;
+
     private Uri resultUri;
+
+
     private static final int REQUEST_CHOOSER = 1000;
     private final static int REQUEST_PERMISSION = 1002;
+
     private String filePath;
     private Uri cameraUri;
     private File cameraFile;
     private Intent intentCamera;
-    private ImageView photo;
-    private ImageView photo2;
+    private
+
     float x;
     float y;
     boolean change = true;
     RelativeLayout relativelayout;
-    FrameLayout frame;
+
+    private int preDx , preDy;
+
+
 
 
     @Override
@@ -66,13 +78,16 @@ public class CreateActivity extends AppCompatActivity {
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _showGallery();
+                showGallery();
             }
         });
 
-        photo = (ImageView)findViewById(R.id.photo);
-        photo2 = (ImageView)findViewById(R.id.photo2);
+        // 関連付け
+        photo = (ImageView)this.findViewById(R.id.photo);
+        photo2 = (ImageView)this.findViewById(R.id.photo2);
         frame = (FrameLayout) findViewById(R.id.frame);
+
+        // リスナーの設定
         photo.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -81,7 +96,6 @@ public class CreateActivity extends AppCompatActivity {
                 return false;
             }
         });
-
         photo2.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -90,9 +104,7 @@ public class CreateActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        relativelayout = (RelativeLayout)findViewById(R.id.relativelayout);
-        relativelayout.setOnDragListener(new View.OnDragListener() {
+        photo.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
                 switch(dragEvent.getAction()){
@@ -117,34 +129,42 @@ public class CreateActivity extends AppCompatActivity {
 
     }
 
-
-
-    private void _showGallery() {
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            checkPermission();
+    public boolean onTouch(View view, MotionEvent event) {
+        int newDx = (int) event.getRawX();
+        int newDy = (int) event.getRawY();
+        switch(event.getAction()){
+            case MotionEvent.ACTION_MOVE:
+                view.performClick();
+                int dx = photo.getLeft() + (newDx - newDy);
+                int dy = photo.getTop() + (newDy - newDy);
+                int imgW = dx + photo.getWidth();
+                int imgH = dy + photo.getHeight();
+                photo.layout(dx, dy, imgW, imgH);
         }
-        else {
-            intentCamera = cameraIntent(); //cameraIntentというIntentを返す
-        }
-
-        Intent intentGallery;
-        if (Build.VERSION.SDK_INT < 19) {
-            intentGallery = new Intent(Intent.ACTION_GET_CONTENT);
-            intentGallery.setType("image/*");
-        } else {
-            intentGallery = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intentGallery.addCategory(Intent.CATEGORY_OPENABLE);
-            intentGallery.setType("image/jpeg");
-        }
-
-        Intent intent = Intent.createChooser(intentGallery, "Select Image");
-        if(intentCamera!=null){
-            intent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {intentCamera});
-        }
-        startActivityForResult(intent, REQUEST_CHOOSER);
+        preDx = newDx;
+        preDy = newDy;
+        return true;
     }
+//    //ドラッグアンドドロップさせようとしているところ
+//    public boolean onTouch(View view, MotionEvent event){
+//        //タッチしている位置取得
+//        int x = (int) event.getRawX();
+//        int y = (int) event.getRawY();
+//        switch (event.getAction()){
+//            case MotionEvent.ACTION_MOVE:
+//                //今回イベントでのviewの移動先
+//                int left = photo.getLeft() + (x - oldx);
+//               int top = photo.getTop() + (y - oldy);
+//               //viewを移動する
+//                photo.layout(left, top,left + photo.getWidth(), top + photo.getHeight());
+//                break;
+//        }
+//        oldx = x;
+//        oldy = y;
+//        return true;
+//    }
 
+    // ギャラリーで画像を選択したときに呼ばれるメソッド
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -177,6 +197,35 @@ public class CreateActivity extends AppCompatActivity {
         }
     }
 
+
+    // ギャラリーを表示
+    private void showGallery() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkPermission();
+        }
+        else {
+            intentCamera = cameraIntent(); //cameraIntentというIntentを返す
+        }
+
+        Intent intentGallery;
+        if (Build.VERSION.SDK_INT < 19) {
+            intentGallery = new Intent(Intent.ACTION_GET_CONTENT);
+            intentGallery.setType("image/*");
+        } else {
+            intentGallery = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intentGallery.addCategory(Intent.CATEGORY_OPENABLE);
+            intentGallery.setType("image/jpeg");
+        }
+
+        Intent intent = Intent.createChooser(intentGallery, "Select Image");
+        if(intentCamera!=null){
+            intent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {intentCamera});
+        }
+        startActivityForResult(intent, REQUEST_CHOOSER);
+    }
+
+    //ボタンを押したときにカメラが呼び出されるメソッド（ギャラリーだけではなく）
     private Intent cameraIntent(){
         File cameraFolder = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "IMG"
@@ -196,6 +245,8 @@ public class CreateActivity extends AppCompatActivity {
 
         return intent;
     }
+
+
     private void checkPermission(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
             cameraIntent();
@@ -204,6 +255,8 @@ public class CreateActivity extends AppCompatActivity {
             requestLocationPermission();
         }
     }
+
+
     private void requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
