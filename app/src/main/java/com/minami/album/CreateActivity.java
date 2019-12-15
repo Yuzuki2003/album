@@ -39,7 +39,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CreateActivity extends AppCompatActivity implements View.OnTouchListener{
+public class CreateActivity extends AppCompatActivity
+implements View.OnTouchListener {
 
     // View
     private ImageButton photoButton;
@@ -57,14 +58,14 @@ public class CreateActivity extends AppCompatActivity implements View.OnTouchLis
     private Uri cameraUri;
     private File cameraFile;
     private Intent intentCamera;
-    private
 
-    float x;
-    float y;
+    //ドラッグアンドドロップのやつ
+    private int preDx,preDy;
+
+
     boolean change = true;
     RelativeLayout relativelayout;
 
-    private int preDx , preDy;
 
 
 
@@ -84,85 +85,15 @@ public class CreateActivity extends AppCompatActivity implements View.OnTouchLis
 
         // 関連付け
         photo = (ImageView)this.findViewById(R.id.photo);
+        photo.setOnTouchListener(this);
+
         photo2 = (ImageView)this.findViewById(R.id.photo2);
+        photo2.setOnTouchListener(this);
+
         frame = (FrameLayout) findViewById(R.id.frame);
 
-        // リスナーの設定
-        photo.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                ClipData data = ClipData.newPlainText("photo","Drag");
-                view.startDrag(data,new View.DragShadowBuilder(view),(Object)view,0);
-                return false;
-            }
-        });
-        photo2.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                ClipData data = ClipData.newPlainText("photo2","Drag");
-                view.startDrag(data,new View.DragShadowBuilder(view),(Object)view,0);
-                return false;
-            }
-        });
-        photo.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View view, DragEvent dragEvent) {
-                switch(dragEvent.getAction()){
-                    //case DragEvent.ACTION_DRAG_EXITED:
-                    // flag = false;
-                    //break;
-                    case DragEvent.ACTION_DROP:
-                        x = dragEvent.getX();
-                        y = dragEvent.getY();
-                        break;
-                    //case DragEvent.ACTION_DRAG_ENTERED:
-                    //  flag = true;
-                    //break;
-                    default:
-                        break;
-
-                }
-                return false;
-            }
-        });
-
 
     }
-
-    public boolean onTouch(View view, MotionEvent event) {
-        int newDx = (int) event.getRawX();
-        int newDy = (int) event.getRawY();
-        switch(event.getAction()){
-            case MotionEvent.ACTION_MOVE:
-                view.performClick();
-                int dx = photo.getLeft() + (newDx - newDy);
-                int dy = photo.getTop() + (newDy - newDy);
-                int imgW = dx + photo.getWidth();
-                int imgH = dy + photo.getHeight();
-                photo.layout(dx, dy, imgW, imgH);
-        }
-        preDx = newDx;
-        preDy = newDy;
-        return true;
-    }
-//    //ドラッグアンドドロップさせようとしているところ
-//    public boolean onTouch(View view, MotionEvent event){
-//        //タッチしている位置取得
-//        int x = (int) event.getRawX();
-//        int y = (int) event.getRawY();
-//        switch (event.getAction()){
-//            case MotionEvent.ACTION_MOVE:
-//                //今回イベントでのviewの移動先
-//                int left = photo.getLeft() + (x - oldx);
-//               int top = photo.getTop() + (y - oldy);
-//               //viewを移動する
-//                photo.layout(left, top,left + photo.getWidth(), top + photo.getHeight());
-//                break;
-//        }
-//        oldx = x;
-//        oldy = y;
-//        return true;
-//    }
 
     // ギャラリーで画像を選択したときに呼ばれるメソッド
     @Override
@@ -194,8 +125,46 @@ public class CreateActivity extends AppCompatActivity implements View.OnTouchLis
                 imageView2.setImageURI(resultUri);
                 imageView2.setVisibility(View.VISIBLE);
             }
+
+
         }
     }
+
+    @Override
+    public boolean onTouch(View v,MotionEvent event){
+        //x,y位置取得
+        int newDx = (int)event.getRawX();
+        int newDy = (int)event.getRawY();
+
+        switch (event.getAction()){
+            //タッチダウンでdragされた
+            case MotionEvent.ACTION_MOVE:
+                //ACTION_MOVEでの位置
+                //performClickを入れろと警告が出るので
+                v.performClick();
+                int dx = photo.getLeft() + (newDx - preDx);
+                int dy = photo.getTop() + (newDy - preDy);
+                int imgW = dx + photo.getWidth();
+                int imgH = dy + photo.getHeight();
+                //画像の位置を設定する
+                photo.layout(dx, dy, imgW, imgH);
+                break;
+            case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+            default:
+                break;
+        }
+
+        //タッチした位置を古い位置とする
+        preDx = newDx;
+        preDy = newDy;
+
+        return true;
+    }
+
+
 
 
     // ギャラリーを表示
